@@ -441,4 +441,24 @@ public class RegisterTest extends TestBase {
 
         Assert.assertEquals(textBoxValue, "HITESH PRAJAPATI");
     }
+
+    @Test(description = "Multi Select Using Action")
+    public void MultiSelectTestCase() throws InterruptedException {
+        driver.get("https://demoqa.com/selectable/");
+        Thread.sleep(3000);
+
+        List<WebElement> multiSelectElements = driver.findElement(By.id("selectable")).findElements(By.tagName("li"));
+
+        Actions multiSelectAction = new Actions(driver);
+        multiSelectAction.keyDown(Keys.CONTROL)
+                .click(multiSelectElements.get(0))
+                .click(multiSelectElements.get(2))
+                .click(multiSelectElements.get(4))
+                .click(multiSelectElements.get(6))
+                .keyUp(Keys.CONTROL)
+                .build()
+                .perform();
+
+        Thread.sleep(5000);
+    }
 }
