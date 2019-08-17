@@ -5,6 +5,7 @@ import com.training.selenium.base.TestBase;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import sun.awt.windows.WBufferStrategy;
 
@@ -331,5 +332,113 @@ public class RegisterTest extends TestBase {
 
 
 
+    }
+
+    @Test(description = "Double Click Using Actions")
+    public void DoubleClickUsingActionTest() throws InterruptedException {
+        driver.get("https://demoqa.com/tooltip-and-double-click/");
+
+        Thread.sleep(3000);
+
+        WebElement doubleClickElement = driver.findElement(By.id("doubleClickBtn"));
+
+//        doubleClickElement.click();
+//        doubleClickElement.click();
+
+        Actions doubleClickAction = new Actions(driver);
+
+        doubleClickAction.moveToElement(doubleClickElement)
+                .doubleClick(doubleClickElement)
+                .build()
+                .perform();
+
+        Thread.sleep(3000);
+
+        // Switch to Alert & Accept It
+        Alert jsAlert = driver.switchTo().alert();
+        jsAlert.accept();
+
+        Thread.sleep(5000);
+    }
+
+    @Test(description = "Right Click Demo")
+    public void RightClickTest() throws InterruptedException {
+
+        driver.get("https://demoqa.com/tooltip-and-double-click/");
+
+        Thread.sleep(3000);
+
+        WebElement rightClickBtnElement = driver.findElement(By.id("rightClickBtn"));
+
+        Actions rightClickAction = new Actions(driver);
+
+        rightClickAction.moveToElement(rightClickBtnElement)
+                .contextClick(rightClickBtnElement)
+                .build()
+                .perform();
+
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("rightclickItem"))));
+
+        List<WebElement> rightClickMenuElement = driver.findElement(By.id("rightclickItem")).findElements(By.className("contextMenuItem"));
+
+        rightClickMenuElement.get(0).click();
+
+        Thread.sleep(3000);
+
+        Alert editAlert = driver.switchTo().alert();
+        editAlert.accept();
+
+        Thread.sleep(5000);
+
+    }
+
+    @Test(description = "Tool Tip Verification")
+    public void ToolTipTestCase() throws InterruptedException {
+        driver.get("https://demoqa.com/tooltip-and-double-click/");
+        Thread.sleep(3000);
+
+        WebElement toolTipElement = driver.findElement(By.id("tooltipDemo"));
+
+        Actions toolTipAction = new Actions(driver);
+        toolTipAction.moveToElement(toolTipElement)
+                .build()
+                .perform();
+
+        WebElement toolTipTextElement = driver.findElement(By.className("tooltiptext"));
+
+        System.out.println("Tool Tip Text: " + toolTipTextElement.getText());
+        Assert.assertEquals(toolTipTextElement.getText().trim().toUpperCase(), "WE ASK FOR YOUR AGE ONLY FOR STATISTICAL PURPOSES.");
+
+        Thread.sleep(5000);
+    }
+
+    @Test(description = "Keyboard Event Test Case")
+    public void KeyboardEventTestCase() throws InterruptedException {
+        driver.get("http://the-internet.herokuapp.com/key_presses");
+        Thread.sleep(3000);
+
+        WebElement textBoxElement = driver.findElement(By.id("target"));
+
+
+        Actions keyBoardEventAction = new Actions(driver);
+
+        keyBoardEventAction.moveToElement(textBoxElement)
+                .keyDown(Keys.SHIFT)
+                .sendKeys(textBoxElement, "hitesh prajapati")
+                .keyUp(Keys.SHIFT)
+                .build()
+                .perform();
+
+        Thread.sleep(5000);
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        String textBoxValue = (String) js.executeScript("return document.getElementById(\"target\").value;");
+
+        System.out.println("Value  : " + textBoxValue);
+
+        Assert.assertEquals(textBoxValue, "HITESH PRAJAPATI");
     }
 }
