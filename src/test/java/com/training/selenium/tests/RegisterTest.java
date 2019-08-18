@@ -7,9 +7,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import sun.awt.windows.ThemeReader;
 import sun.awt.windows.WBufferStrategy;
 
 import java.util.List;
+import java.util.Set;
 
 public class RegisterTest extends TestBase {
 
@@ -356,7 +358,10 @@ public class RegisterTest extends TestBase {
 
         // Switch to Alert & Accept It
         Alert jsAlert = driver.switchTo().alert();
+        String textOnAlert = jsAlert.getText();
         jsAlert.accept();
+
+        System.out.println("Text On Alert : " + textOnAlert);
 
         Thread.sleep(5000);
     }
@@ -407,6 +412,7 @@ public class RegisterTest extends TestBase {
                 .perform();
 
         WebElement toolTipTextElement = driver.findElement(By.className("tooltiptext"));
+
 
         System.out.println("Tool Tip Text: " + toolTipTextElement.getText());
         Assert.assertEquals(toolTipTextElement.getText().trim().toUpperCase(), "WE ASK FOR YOUR AGE ONLY FOR STATISTICAL PURPOSES.");
@@ -460,5 +466,52 @@ public class RegisterTest extends TestBase {
                 .perform();
 
         Thread.sleep(5000);
+    }
+
+    @Test(description = "Switching Between Window")
+    public void SwitchToWindowTestCase() throws InterruptedException {
+            driver.get("https://demoqa.com/automation-practice-switch-windows/");
+        Thread.sleep(3000);
+
+        String parentWindow = driver.getWindowHandle();
+
+        WebElement openNewWindowBtnElement = driver.findElement(By.id("button1"));
+        openNewWindowBtnElement.click();
+
+        WebDriverWait wait = new WebDriverWait(driver,60);
+
+        Set<String> windowList = driver.getWindowHandles();
+
+        for(String window:windowList) {
+            System.out.println("Window Id :" + window);
+            if(!window.equals(parentWindow)) {
+                driver.switchTo().window(window);
+                System.out.println("Successfully Switched to Window Having Id: " + window);
+            }
+        }
+
+        driver.manage().window().maximize();
+
+        Thread.sleep(5000);
+
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("cookie_action_close_header"))));
+        driver.findElement(By.id("cookie_action_close_header")).click();
+
+        Thread.sleep(5000);
+
+        driver.close();
+
+        driver.switchTo().window(parentWindow);
+
+        Thread.sleep(2000);
+
+        WebElement titleElement = driver.findElement(By.className("entry-title"));
+
+        System.out.println("Title in Parent Window Is: " + titleElement.getText());
+
+        Assert.assertEquals(titleElement.getText().trim().toUpperCase(),"AUTOMATION PRACTICE SWITCH WINDOWS");
+
+        Thread.sleep(5000);
+
     }
 }
