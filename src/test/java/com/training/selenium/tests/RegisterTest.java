@@ -2,6 +2,7 @@ package com.training.selenium.tests;
 
 
 import com.training.selenium.base.TestBase;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
@@ -514,4 +515,118 @@ public class RegisterTest extends TestBase {
         Thread.sleep(5000);
 
     }
+
+    @Test(description = "Windows Authentication")
+    public void windowsAuthenticationTestCases() throws InterruptedException {
+        // Direct Auth
+        driver.get("http://the-internet.herokuapp.com/basic_auth");
+
+        // Login to Windows Authentication
+        driver.get("http://admin:admin@the-internet.herokuapp.com/basic_auth");
+
+        Thread.sleep(3000);
+
+        WebElement successElement = driver.findElement(By.id("content"));
+        Assert.assertTrue(successElement.getText().trim().toUpperCase().contains("CONGRATULATIONS! YOU MUST HAVE THE PROPER CREDENTIALS."));
+
+        Thread.sleep(5000);
+    }
+
+    @Test(description = "Select2 : Dropdown with Search box")
+    public void select2DropdownWithSearchBoxTestCase() throws InterruptedException {
+        driver.get("https://www.seleniumeasy.com/test/jquery-dropdown-search-demo.html");
+        Thread.sleep(3000);
+
+        List<WebElement> select2SelectElements = driver.findElements(By.xpath("//span[@role='combobox']"));
+
+        // Click on Select2
+        select2SelectElements.get(0).click();
+
+        // Get area owns attribute
+        String optionListLocator = select2SelectElements.get(0).getAttribute("aria-owns");
+
+        // Get List of Options
+        List<WebElement> optionListElements = driver.findElement(By.id(optionListLocator)).findElements(By.tagName("li"));
+        Thread.sleep(2000);
+
+        String optionToSelect = "NEW ZEALAND";
+
+        for (WebElement option: optionListElements) {
+            if(option.getText().trim().toUpperCase().equals(optionToSelect)) {
+                option.click();
+                break;
+            }
+        }
+        Thread.sleep(5000);
+    }
+
+    @Test(description = "Select2 : Multi Select - Search and Select multiple states")
+    public void select2MultiSelectWithSearchTestCase() throws InterruptedException {
+        driver.get("https://www.seleniumeasy.com/test/jquery-dropdown-search-demo.html");
+        Thread.sleep(3000);
+        WebDriverWait wait = new WebDriverWait(driver,40);
+
+
+        List<WebElement> select2SelectElements = driver.findElements(By.xpath("//span[@role='combobox']"));
+        WebElement select2InputElement = select2SelectElements.get(1).findElement(By.tagName("input"));
+
+        // Enter State to search
+        select2InputElement.sendKeys("Mi");
+
+        Thread.sleep(1000);
+
+        List<WebElement> filteredOptions = driver.findElement(By.id(select2SelectElements.get(1).getAttribute("aria-owns"))).findElements(By.tagName("li"));
+
+        for (WebElement option : filteredOptions) {
+            if(option.getText().trim().toUpperCase().equals("MISSOURI")) {
+                option.click();
+                break;
+            }
+        }
+
+        // Enter state to search 2nd time
+        select2InputElement.sendKeys("No");
+
+        /*
+        We have to get the elements again since the DOM has been changed.
+        If we use same element that we got before DOM changes i.e.filteredOptions then selenium
+        will throw StaleElementException coz the element that it took before, it's state has been changed or refreshed.
+         */
+        List<WebElement> filteredOptions1 = driver.findElement(By.id(select2SelectElements.get(1).getAttribute("aria-owns"))).findElements(By.tagName("li"));
+
+        Thread.sleep(1000);
+        for (WebElement option : filteredOptions1) {
+            if(option.getText().trim().toUpperCase().equals("NORTH CAROLINA")) {
+                option.click();
+                break;
+            }
+        }
+        Thread.sleep(5000);
+    }
+
+    @Test(description = "Dropdown with category related options")
+    public void dropDownWithCategoryOfOptionTestCase() throws InterruptedException {
+        driver.get("https://www.seleniumeasy.com/test/jquery-dropdown-search-demo.html");
+        Thread.sleep(3000);
+
+        Select selectFileElement = new Select(driver.findElement(By.id("files")));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(driver.findElement(By.id("files")))
+                .build()
+                .perform();
+
+        Thread.sleep(3000);
+
+        selectFileElement.selectByVisibleText("Java");
+
+        Thread.sleep(5000);
+    }
 }
+
+
+/*
+    https://demo.openmrs.org/openmrs/login.htm
+    Username: Admin
+    Password: Admin123
+ */
