@@ -519,10 +519,15 @@ public class RegisterTest extends TestBase {
     @Test(description = "Windows Authentication")
     public void windowsAuthenticationTestCases() throws InterruptedException {
         // Direct Auth
-        driver.get("http://the-internet.herokuapp.com/basic_auth");
+        // driver.get("http://the-internet.herokuapp.com/basic_auth");
+        String USERNAME = "admin";
+        String PASSWORD = "admin";
+        String url = "http://" + USERNAME + ":" + PASSWORD + "@the-internet.herokuapp.com/basic_auth";
 
         // Login to Windows Authentication
-        driver.get("http://admin:admin@the-internet.herokuapp.com/basic_auth");
+        driver.get(url);
+        // https://username:password@url
+
 
         Thread.sleep(3000);
 
